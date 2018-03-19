@@ -121,3 +121,45 @@ class Ui_MainWindow(object):
         else:
             current_address = os.getcwd()
             next_address = current_address +"\\" + self.file_name
+        print(next_address)
+        self.lineEdit.setText(next_address)
+        os.chdir(next_address)
+        in_directory = os.listdir()
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setRowCount(len(in_directory))
+        for i in range(len(in_directory)):
+            for j in range(3):
+                item = QtWidgets.QTableWidgetItem()
+                self.tableWidget.setItem(i, j, item)
+                if j == 0:
+                    item.setText(str(in_directory[i]))
+                    file_name, file_extension = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                    if file_extension == ".exe":
+                        item.setIcon(self.icon_exe)
+                    elif file_extension == '':
+                        item.setIcon(self.icon_folder)
+                    elif file_extension == ".pdf":
+                        item.setIcon(self.icon_pdf)
+                    elif file_extension == ".txt":
+                        item.setIcon(self.icon_txt)
+                    elif file_extension == ".MSI" or file_extension == ".Msi":
+                        item.setIcon(self.icon_msi)
+                    elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                        item.setIcon(self.icon_image)
+                    elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                        item.setIcon(self.icon_settings)
+                    elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                        item.setIcon(self.icon_rar)
+                    elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                        item.setIcon(self.icon_video)
+                    else:
+                        item.setIcon(self.icon_unknown)
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
+
