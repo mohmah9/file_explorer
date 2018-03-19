@@ -831,3 +831,170 @@ class Ui_MainWindow(object):
                                     item.setIcon(self.icon_folder)
                                 elif file_extension == ".pdf":
                                     item.setIcon(self.icon_pdf)
+                                elif file_extension == ".txt":
+                                    item.setIcon(self.icon_txt)
+                                elif file_extension == ".MSI" or file_extension == ".Msi":
+                                    item.setIcon(self.icon_msi)
+                                elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                                    item.setIcon(self.icon_image)
+                                elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                                    item.setIcon(self.icon_settings)
+                                elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                                    item.setIcon(self.icon_rar)
+                                elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                                    item.setIcon(self.icon_video)
+                                elif file_extension == '.mp3' or file_extension == ".wmv":
+                                    item.setIcon(self.icon_music)
+                                else:
+                                    item.setIcon(self.icon_unknown)
+                            if j == 2:
+                                item.setText(
+                                    str(os.path.getsize(self.Quick_access[6:]+"\\" + in_directory[i]) / (1024 ** 2)))
+                            if j == 1:
+                                file_name3, file_extension3 = os.path.splitext(
+                                    self.Quick_access[5:]+"\\" + in_directory[i])
+                                if file_extension3 != "":
+                                    item.setText(file_extension3[1:])
+                                else:
+                                    item.setText("folder")
+    def new_folder(self):
+        try:
+            newtext, ok = QtWidgets.QInputDialog.getText( self.centralwidget,'Text Input Dialog', 'Enter your name:')
+            if ok:
+                current_address2=os.getcwd()
+                current_address2=current_address2+'/'+newtext
+                os.makedirs(current_address2)
+                # print(os.listdir())
+                self.refresh()
+        except:
+            pass
+    def copy_file(self):
+        try:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            destination, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog', 'Enter your destination address:')
+            source=file_name+file_extension
+            source_list=source.split('\\')
+            file_name_paste=source_list[len(source_list)-1]
+            destination=destination + '\\' + file_name_paste
+            if ok:
+                if file_extension=='':
+                    shutil.copytree(source, destination)
+                    self.refresh()
+                else:
+                    shutil.copyfile(source, destination)
+                    self.refresh()
+        except:
+            pass
+    def delete(self):
+        try:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            if file_extension=='':
+                shutil.rmtree(file_name+file_extension)
+                self.refresh()
+            else:
+                os.remove(file_name+file_extension)
+                self.refresh()
+        except:
+            pass
+    def cut(self):
+        try:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            destination, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog','Enter your destination address:')
+            source = file_name + file_extension
+            source_list = source.split('\\')
+            file_name_paste = source_list[len(source_list) - 1]
+            destination = destination + '\\' + file_name_paste
+            if ok:
+                if file_extension=='':
+                    shutil.copytree(source, destination)
+                    self.refresh()
+                else:
+                    shutil.copyfile(source, destination)
+                    self.refresh()
+            if file_extension=='':
+                shutil.rmtree(file_name+file_extension)
+                self.refresh()
+            else:
+                os.remove(file_name+file_extension)
+                self.refresh()
+        except:
+            pass
+    def rename(self):
+        try:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            new_name, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog','Enter a name:')
+            old = file_name+file_extension
+            old_list = old.split('\\')
+            new_list = old_list[:len(old_list)-1]
+            if new_list[len(new_list)-1]=='':
+                new_list.pop()
+            new='\\'.join(new_list)
+            new = new+"\\"+new_name+file_extension
+            if ok:
+                os.rename(old,new)
+                self.refresh()
+        except:
+            pass
+
+
+    def refresh(self):
+        if self.lineEdit.text() != "":
+            in_directory = os.listdir()
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(str(os.path.getsize(self.lineEdit.text() + '\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
