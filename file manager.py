@@ -472,3 +472,477 @@ class Ui_MainWindow(object):
                     self.lineEdit.setText(str(self.file_name+ '\\'))
                 elif self.lineEdit.text()!="":
                     self.lineEdit.setText(str(self.lineEdit.text()+"\\"+self.file_name))
+                else:
+                    self.lineEdit.setText(str(self.file_name))
+
+                if ftp_server.client != None:
+                    ftp_server.send_text(self.file_name)
+                    in_directory = ftp_server.receive_text()
+                    in_directory = eval(in_directory)
+                    self.tableWidget.setRowCount(0)
+                    self.tableWidget.setRowCount(len(in_directory))
+                    for i in range(len(in_directory)):
+                        for j in range(3):
+                            item = QtWidgets.QTableWidgetItem()
+                            self.tableWidget.setItem(i, j, item)
+                            if j == 0:
+                                item.setText(str(in_directory[i]))
+                                file_name, file_extension = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                                if file_extension == ".exe":
+                                    item.setIcon(self.icon_exe)
+                                elif file_extension == '':
+                                    item.setIcon(self.icon_folder)
+                                elif file_extension == ".pdf":
+                                    item.setIcon(self.icon_pdf)
+                                elif file_extension == ".txt":
+                                    item.setIcon(self.icon_txt)
+                                elif file_extension == ".MSI" or file_extension == ".Msi":
+                                    item.setIcon(self.icon_msi)
+                                elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                                    item.setIcon(self.icon_image)
+                                elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                                    item.setIcon(self.icon_settings)
+                                elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                                    item.setIcon(self.icon_rar)
+                                elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                                    item.setIcon(self.icon_video)
+                                elif file_extension == '.mp3' or file_extension == ".wmv":
+                                    item.setIcon(self.icon_music)
+                                else:
+                                    item.setIcon(self.icon_unknown)
+                            if j == 1:
+                                item.setText(
+                                    str("connected pc 2"))
+
+            else:
+                threading.Thread(target=self.download).start()
+
+
+    def Back_button(self):
+        global ftp_server
+        global ftp_counter
+        if ftp_counter<0:
+            ftp_counter=0
+        if ftp_counter == 0:
+            if self.lineEdit.text()!= "":
+                current_address = self.lineEdit.text()
+                current_address_list = current_address.split("\\")
+                if len(current_address_list) > 2:
+                    back_address = current_address_list[:len(current_address_list)-1]
+                    back_address = "\\".join(back_address)
+                    self.lineEdit.setText(back_address)
+                    try:
+                        self.tableWidget.setRowCount(0)
+                        in_directory = os.listdir(back_address)
+                        in_directory = in_directory[::-1]
+                        self.tableWidget.setRowCount(len(in_directory))
+                        for i in range(len(in_directory)):
+                            for j in range(3):
+                                item = QtWidgets.QTableWidgetItem()
+                                self.tableWidget.setItem(i, j, item)
+                                if j == 0:
+                                    item.setText(str(in_directory[i]))
+                                    file_name, file_extension = os.path.splitext(
+                                        self.lineEdit.text() + '\\' + in_directory[i])
+                                    if file_extension == ".exe":
+                                        item.setIcon(self.icon_exe)
+                                    elif file_extension == '':
+                                        item.setIcon(self.icon_folder)
+                                    elif file_extension == ".pdf":
+                                        item.setIcon(self.icon_pdf)
+                                    elif file_extension == ".txt":
+                                        item.setIcon(self.icon_txt)
+                                    elif file_extension == ".MSI" or file_extension == ".Msi":
+                                        item.setIcon(self.icon_msi)
+                                    elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                                        item.setIcon(self.icon_image)
+                                    elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                                        item.setIcon(self.icon_settings)
+                                    elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                                        item.setIcon(self.icon_rar)
+                                    elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                                        item.setIcon(self.icon_video)
+                                    elif file_extension == '.mp3' or file_extension == ".wmv":
+                                        item.setIcon(self.icon_music)
+                                    else:
+                                        item.setIcon(self.icon_unknown)
+                                if j == 2:
+                                    item.setText(
+                                        str(os.path.getsize(self.lineEdit.text() + '\\' + in_directory[i]) / (1024 ** 2)))
+                                if j == 1:
+                                    file_name3, file_extension3 = os.path.splitext(
+                                        self.lineEdit.text() + '\\' + in_directory[i])
+                                    if file_extension3 != "":
+                                        item.setText(file_extension3[1:])
+                                    else:
+                                        item.setText("folder")
+                    except:
+                        self.lineEdit.setText("not valid address")
+                if len(current_address_list) == 2 and current_address_list[len(current_address_list)-1]!='':
+                    back_address = current_address_list[0] + "\\"
+                    self.lineEdit.setText(back_address)
+                    try:
+                        self.tableWidget.setRowCount(0)
+                        in_directory = os.listdir(back_address)
+                        in_directory = in_directory[::-1]
+                        self.tableWidget.setRowCount(len(in_directory))
+                        for i in range(len(in_directory)):
+                            for j in range(3):
+                                item = QtWidgets.QTableWidgetItem()
+                                self.tableWidget.setItem(i, j, item)
+                                if j == 0:
+                                    item.setText(str(in_directory[i]))
+                                    file_name, file_extension = os.path.splitext(
+                                        self.lineEdit.text() + '\\' + in_directory[i])
+                                    if file_extension == ".exe":
+                                        item.setIcon(self.icon_exe)
+                                    elif file_extension == '':
+                                        item.setIcon(self.icon_folder)
+                                    elif file_extension == ".pdf":
+                                        item.setIcon(self.icon_pdf)
+                                    elif file_extension == ".txt":
+                                        item.setIcon(self.icon_txt)
+                                    elif file_extension == ".MSI" or file_extension == ".Msi":
+                                        item.setIcon(self.icon_msi)
+                                    elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                                        item.setIcon(self.icon_image)
+                                    elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                                        item.setIcon(self.icon_settings)
+                                    elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                                        item.setIcon(self.icon_rar)
+                                    elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                                        item.setIcon(self.icon_video)
+                                    elif file_extension == '.mp3' or file_extension == ".wmv":
+                                        item.setIcon(self.icon_music)
+                                    else:
+                                        item.setIcon(self.icon_unknown)
+                    except:
+                        self.lineEdit.setText("not valid address")
+                elif len(current_address_list) == 2 and current_address_list[len(current_address_list)-1]=='':
+                    if ftp_flag==True and ftp_server.client != None:
+                        back_address = ""
+                        self.lineEdit.setText(back_address)
+
+                        self.tableWidget.setRowCount(len(drives_list) + len(self.drive_list) + 1)
+                        item = QtWidgets.QTableWidgetItem()
+                        item.setText("connected PC")
+                        self.tableWidget.setItem(len(self.drive_list), 0, item)
+                        v = len(self.drive_list) + 1
+                        for i in range(len(drives_list)):
+                            item = QtWidgets.QTableWidgetItem()
+                            item.setIcon(self.icon_drives)
+                            item.setText(drives_list[i])
+                            self.tableWidget.setItem(v, 0, item)
+                            v += 1
+                        b = len(self.drive_list) + 1
+
+                        for j in range(len(drives_list)):
+                            item = QtWidgets.QTableWidgetItem()
+                            item.setText("Drive2")
+                            self.tableWidget.setItem(b, 1, item)
+                            b += 1
+                        for i in range(len(self.drive_list)):
+                            for j in range(3):
+                                item = QtWidgets.QTableWidgetItem()
+                                self.tableWidget.setItem(i, j, item)
+                                if j == 0:
+                                    item.setText(str(self.drive_list[i]))
+                                    item.setIcon(self.icon_drives)
+                                if j == 1:
+                                    item.setText("Drive")
+                    else:
+                        back_address = ""
+                        self.lineEdit.setText(back_address)
+                        self.tableWidget.setRowCount(len(self.drive_list))
+                        self.tableWidget.setRowCount(0)
+                        self.tableWidget.setRowCount(len(self.drive_list))
+                        for i in range(len(self.drive_list)):
+                            for j in range(3):
+                                item = QtWidgets.QTableWidgetItem()
+                                self.tableWidget.setItem(i, j, item)
+                                if j == 0:
+                                    item.setText(str(self.drive_list[i]))
+                                    item.setIcon(self.icon_drives)
+                                if j == 1:
+                                    item.setText("Drive")
+
+
+        if ftp_counter<0:
+            ftp_counter=0
+        if ftp_counter != 0:
+            ftp_counter -= 1
+            current_address = self.lineEdit.text()
+            current_address_list = current_address.split("\\")
+            if len(current_address_list) > 2:
+                back_address = current_address_list[:len(current_address_list) - 1]
+                back_address = "\\".join(back_address)
+                self.lineEdit.setText(back_address)
+            if len(current_address_list) == 2 and current_address_list[len(current_address_list) - 1] != '':
+                back_address = current_address_list[0] + "\\"
+                self.lineEdit.setText(back_address)
+            ftp_server.send_text("BACKWARD")
+            in_directory = ftp_server.receive_text()
+            in_directory = eval(in_directory)
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            self.lineEdit.text() + '\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 1:
+                        item.setText("connected pc 2")
+            if len(current_address_list) == 2 and current_address_list[len(current_address_list) - 1] == '':
+                back_address = ""
+                self.lineEdit.setText(back_address)
+
+
+                self.tableWidget.setRowCount(len(drives_list) + len(self.drive_list) + 1)
+                item = QtWidgets.QTableWidgetItem()
+                item.setText("connected PC")
+                self.tableWidget.setItem(len(self.drive_list), 0, item)
+                v = len(self.drive_list) + 1
+                for i in range(len(drives_list)):
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setIcon(self.icon_drives)
+                    item.setText(drives_list[i])
+                    self.tableWidget.setItem(v, 0, item)
+                    v += 1
+                b = len(self.drive_list) + 1
+
+                for j in range(len(drives_list)):
+                    item = QtWidgets.QTableWidgetItem()
+                    item.setText("Drive2")
+                    self.tableWidget.setItem(b, 1, item)
+                    b += 1
+                for i in range(len(self.drive_list)):
+                    for j in range(3):
+                        item = QtWidgets.QTableWidgetItem()
+                        self.tableWidget.setItem(i, j, item)
+                        if j == 0:
+                            item.setText(str(self.drive_list[i]))
+                            item.setIcon(self.icon_drives)
+                        if j == 1:
+                            item.setText("Drive")
+
+
+
+
+
+
+    def quick_access(self):
+        r = self.tableWidget2.currentRow()
+        self.Quick_access = self.tableWidget2.item(r, 0).text()
+        if self.Quick_access=="Desktop":
+            self.lineEdit.setText("C:\\Users\\"+str(os.getlogin())+'\\Desktop')
+            in_directory = os.listdir("C:\\Users\\"+str(os.getlogin())+'\\Desktop')
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Desktop\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize("C:\\Users\\" + str(os.getlogin()) + '\\Desktop\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Desktop\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+        if self.Quick_access=="Downloads":
+            self.lineEdit.setText("C:\\Users\\"+str(os.getlogin())+'\\Downloads')
+            in_directory = os.listdir("C:\\Users\\"+str(os.getlogin())+'\\Downloads')
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Downloads\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize("C:\\Users\\" + str(os.getlogin()) + '\\Downloads\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Downloads\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+        if self.Quick_access=="Pictures":
+            self.lineEdit.setText("C:\\Users\\"+str(os.getlogin())+'\\Pictures')
+            in_directory = os.listdir("C:\\Users\\"+str(os.getlogin())+'\\Pictures')
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Pictures\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize("C:\\Users\\" + str(os.getlogin()) + '\\Pictures\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Pictures\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+        if self.Quick_access=="Documents":
+            self.lineEdit.setText("C:\\Users\\"+str(os.getlogin())+'\\Documents')
+            in_directory = os.listdir("C:\\Users\\"+str(os.getlogin())+'\\Documents')
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Documents\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize("C:\\Users\\" + str(os.getlogin()) + '\\Documents\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Documents\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+        if self.Quick_access=="Musics":
+            self.lineEdit.setText("C:\\Users\\"+str(os.getlogin())+'\\Music')
+            in_directory = os.listdir("C:\\Users\\"+str(os.getlogin())+'\\Music')
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
