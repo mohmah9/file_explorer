@@ -1220,3 +1220,277 @@ class Ui_MainWindow(object):
                     self.refresh()
             except:
                 pass
+    def cut(self):
+        global source , destination ,file_name , file_extension
+        try:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            destination, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog','Enter your destination address:')
+            source = file_name + file_extension
+            source_list = source.split('\\')
+            file_name_paste = source_list[len(source_list) - 1]
+            destination = destination + '\\' + file_name_paste
+            if ok:
+                if file_extension=='':
+                    threading.Thread(target=self.progress_bar_dir).start()
+                    shutil.copytree(source, destination)
+                    self.refresh()
+                else:
+                    threading.Thread(target=self.progress_bar_file).start()
+                    shutil.copyfile(source, destination)
+                    self.refresh()
+            if file_extension=='':
+                shutil.rmtree(file_name+file_extension)
+                self.refresh()
+            else:
+                os.remove(file_name+file_extension)
+                self.refresh()
+        except:
+            pass
+    def rename(self):
+        try:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            new_name, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog','Enter a name:')
+            old = file_name+file_extension
+            old_list = old.split('\\')
+            new_list = old_list[:len(old_list)-1]
+            if new_list[len(new_list)-1]=='':
+                new_list.pop()
+            new='\\'.join(new_list)
+            new = new+"\\"+new_name+file_extension
+            if ok:
+                os.rename(old,new)
+                self.refresh()
+        except:
+            pass
+    def refresh(self):
+        if self.lineEdit.text() != "":
+            in_directory = os.listdir(self.lineEdit.text())
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(str(os.path.getsize(self.lineEdit.text() + '\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+
+
+    def chat(self):
+        newtext, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Make server or not','Do you want to make a server? yes/no')
+        if ok:
+            if newtext == "yes" or newtext == "Yes" or newtext == "y":
+                host_ip = open('chatHostPort.txt', 'w')
+                host_ip.write(str("127.0.0.1" + " "))
+                host_ip.write(str(33000))
+                host_ip.close()
+                server = threading.Thread(target=make_chat_server)
+                client = threading.Thread(target=make_chat_client)
+                server.start()
+                client.start()
+            if newtext == "no" or newtext == "No" or newtext == "n":
+                Host, ok1 = QtWidgets.QInputDialog.getText(self.centralwidget, 'Host',
+                                                           'Enter Host address:')
+                Port, ok2 = 33000, True
+
+                # making a text file that has the host and ip address
+                if ok1 and ok2:
+                    host_ip = open('chatHostPort.txt', 'w')
+                    host_ip.write(str(Host + " "))
+                    host_ip.write(str(Port))
+                    host_ip.close()
+                # making a text file that has the host and ip address
+                client = threading.Thread(target=make_chat_client)
+                client.start()
+
+    def ftp(self):
+        global ftp_server
+        global ftp_client
+        global ftp_server2
+        global ftp_client2
+        global drives_list
+        global ftp_flag
+        text,ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Make server or not','Do you want to make a server? yes/no')
+        if ok:
+            if text == "yes" or text == "Yes" or text == "y":
+                Host, ok1 = "0.0.0.0", True
+                Port, ok2 = 32000, True
+                ftp_server = server(str(Host),Port)
+                threading.Thread(target=ftp_server.start).start()
+
+
+                ftp_server2 = download_server("0.0.0.0", 35000)
+                threading.Thread(target=ftp_server2.start).start()
+
+                self.message_box_wait()
+                while 1:
+                    if ftp_server.client !=None:
+                        ftp_flag=True
+                        drives_list = ftp_server.receive_text()
+                        drives_list = eval(drives_list)
+                        self.tableWidget.setRowCount(len(drives_list)+len(self.drive_list)+1)
+                        item = QtWidgets.QTableWidgetItem()
+                        item.setText("connected PC")
+                        self.tableWidget.setItem(len(self.drive_list),0,item)
+                        v = len(self.drive_list)+1
+                        for i in range(len(drives_list)):
+                            item = QtWidgets.QTableWidgetItem()
+                            item.setIcon(self.icon_drives)
+                            item.setText(drives_list[i])
+                            self.tableWidget.setItem(v,0,item)
+                            v+=1
+                        b = len(self.drive_list)+1
+                        for j in range(len(drives_list)):
+                            item = QtWidgets.QTableWidgetItem()
+                            item.setText("Drive2")
+                            self.tableWidget.setItem(b, 1,item)
+                            b+=1
+
+
+                        break
+
+
+
+            if text == "no" or text == "No" or text == "n":
+                global Host123
+                self.host, ok1 = QtWidgets.QInputDialog.getText(self.centralwidget, 'Host',
+                                                           'Enter Host address:')
+                Port, ok2 = 32000, True
+                if ok1:
+                    ftp_client = client(str(self.host),Port)
+                    threading.Thread(target=ftp_client.start).start()
+                    ftp_client2 = download_client(str(self.host), 35000)
+                    threading.Thread(target=ftp_client2.start).start()
+    def ftp_refresh(self):
+        global ftp_server
+        send = str(self.lineEdit.text()+" refresh")
+        ftp_server.send_text(send)
+        in_directory = ftp_server.receive_text()
+        in_directory = eval(in_directory)
+        self.tableWidget.setRowCount(len(in_directory))
+        for i in range(len(in_directory)):
+            for j in range(3):
+                item = QtWidgets.QTableWidgetItem()
+                self.tableWidget.setItem(i, j, item)
+                if j == 0:
+                    item.setText(str(in_directory[i]))
+                    file_name, file_extension = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                    if file_extension == ".exe":
+                        item.setIcon(self.icon_exe)
+                    elif file_extension == '':
+                        item.setIcon(self.icon_folder)
+                    elif file_extension == ".pdf":
+                        item.setIcon(self.icon_pdf)
+                    elif file_extension == ".txt":
+                        item.setIcon(self.icon_txt)
+                    elif file_extension == ".MSI" or file_extension == ".Msi":
+                        item.setIcon(self.icon_msi)
+                    elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                        item.setIcon(self.icon_image)
+                    elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                        item.setIcon(self.icon_settings)
+                    elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                        item.setIcon(self.icon_rar)
+                    elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                        item.setIcon(self.icon_video)
+                    elif file_extension == '.mp3' or file_extension == ".wmv":
+                        item.setIcon(self.icon_music)
+                    else:
+                        item.setIcon(self.icon_unknown)
+                if j == 2:
+                    item.setText(str(os.path.getsize(self.lineEdit.text() + '\\' + in_directory[i]) / (1024 ** 2)))
+                if j == 1:
+                    file_name3, file_extension3 = os.path.splitext(self.lineEdit.text() + '\\' + in_directory[i])
+                    if file_extension3 != "":
+                        item.setText(file_extension3[1:])
+                    else:
+                        item.setText("folder")
+    def download(self):
+        global ftp_client
+        global ftp_counter
+        global ftp_server
+        global ftp_server2
+        global download_size , file_name , file_extension
+        if ftp_counter<0:
+            ftp_counter=0
+        if ftp_counter != 0:
+
+            r = self.tableWidget.currentRow()
+            file_name_download = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + file_name_download)
+            saved_name = file_name.split("\\")
+            saved_name = saved_name[len(saved_name)-1]
+            if file_extension != "":
+                while True:
+                    if ftp_server2.client != None:
+                        break
+                ftp_server.send_text(file_name+file_extension+'#download')
+                download_size=ftp_server.receive_text()
+                threading.Thread(target=self.progress_bar_download).start()
+                ftp_server2.send_text(file_name+file_extension+"#DOWNLOAD")
+                ftp_server2.receive_file(saved_name+file_extension)
+    def download_Button(self):
+        global ftp_counter
+        r = self.tableWidget.currentRow()
+        self.file_name = self.tableWidget.item(r, 0).text()
+        file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+        if ftp_counter<0:
+            ftp_counter=0
+        if ftp_counter != 0 and file_extension!="":
+
+            threading.Thread(target=self.download).start()
+    def message_box_wait(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("click ok when the client is connected. ")
+        msg.setWindowTitle("please wait...")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        retval = msg.exec_()
+        print("value of pressed message box button:", retval)
+
+def make_chat_client():
+        import chat_client
+def make_chat_server():
+        import chat_server
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

@@ -88,3 +88,92 @@ class client:
             elif x == "BACKWARD":
                 os.chdir("..")
                 a = os.listdir()
+                self.send_text(a)
+            elif len(x) != 2:
+                y = os.getcwd() + "\\" + x
+                os.chdir(y)
+                x1 = str(os.listdir())
+                self.send_text(x1)
+            else:
+                if x == "D:":
+                    x1 = str(os.listdir(x + "\\"))
+                    os.chdir(str(x + "\\"))
+                else:
+                    x1 = str(os.listdir(x))
+                    os.chdir(x)
+                self.send_text(x1)
+
+
+
+    def send_text(self,text):
+        self.client_socket.send(str(text).encode("utf8"))
+    def receive_text(self):
+        received_text = self.client_socket.recv(self.bufsiz).decode("utf8")
+        return received_text
+
+
+
+class download_server:
+    def __init__(self,host,port):
+        self.host = str(host)
+        self.port = int(port)
+        self.addr =(str(host),int(port))
+        self.SERVER = None
+        self.client = None
+        self.client_address = None
+        self.bufsiz = 8192
+    def start(self):
+        self.SERVER = socket(AF_INET, SOCK_STREAM)
+        self.SERVER.bind(self.addr)
+        self.SERVER.listen(5)
+        print("Waiting for connection...")
+        self.accept_incoming_connections()
+        self.SERVER.close()
+    def accept_incoming_connections(self):
+        while True:
+            self.client, self.client_address = self.SERVER.accept()
+            print("%s:%s has connected." % self.client_address)
+    def send_text(self,text):
+        self.client.send(text.encode("utf8"))
+    def receive_text(self):
+        received_text = self.client.recv(self.bufsiz).decode("utf8")
+        return received_text
+    def receive_file(self,saving_name):
+        f = open(str(saving_name), 'wb')
+        l = self.client.recv(1024)
+        while (l):
+            f.write(l)
+            l = self.client.recv(1024)
+        f.close()
+
+
+class download_client:
+    def __init__(self,host,port):
+        self.host = str(host)
+        self.port = int(port)
+        self.addr = (str(host),int(port))
+        self.bufsiz = 8192
+        self.client_socket = None
+    def start(self):
+        self.client_socket = socket(AF_INET, SOCK_STREAM)
+        self.client_socket.connect(self.addr)
+        while True:
+            x = self.receive_text()
+            if x[len(x)-8:len(x)] == "DOWNLOAD":
+                x = x.split("#")[0]
+                f = open(x,"rb")
+                l = f.read(1024)
+                while l:
+                    self.client_socket.send(l)
+                    l = f.read(1024)
+                f.close()
+                self.client_socket.close()
+                time.sleep(2)
+                self.client_socket = socket(AF_INET, SOCK_STREAM)
+                self.client_socket.connect(self.addr)
+
+    def send_text(self,text):
+        self.client_socket.send(str(text).encode("utf8"))
+    def receive_text(self):
+        received_text = self.client_socket.recv(self.bufsiz).decode("utf8")
+        return received_text
