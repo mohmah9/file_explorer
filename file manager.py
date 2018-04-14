@@ -946,3 +946,277 @@ class Ui_MainWindow(object):
                 for j in range(3):
                     item = QtWidgets.QTableWidgetItem()
                     self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Music\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize("C:\\Users\\" + str(os.getlogin()) + '\\Music\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Music\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+        if self.Quick_access=="Videos":
+            self.lineEdit.setText("C:\\Users\\"+str(os.getlogin())+'\\Videos')
+            in_directory = os.listdir("C:\\Users\\"+str(os.getlogin())+'\\Videos')
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Videos\\' + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize("C:\\Users\\" + str(os.getlogin()) + '\\Videos\\' + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            "C:\\Users\\" + str(os.getlogin()) + '\\Videos\\' + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+        if self.Quick_access[:5] == "Drive":
+            self.lineEdit.setText(self.Quick_access[6:]+"\\")
+            in_directory = os.listdir(self.Quick_access[6:]+"\\")
+            in_directory = in_directory[::-1]
+            self.tableWidget.setRowCount(len(in_directory))
+            for i in range(len(in_directory)):
+                for j in range(3):
+                    item = QtWidgets.QTableWidgetItem()
+                    self.tableWidget.setItem(i, j, item)
+                    if j == 0:
+                        item.setText(str(in_directory[i]))
+                        file_name, file_extension = os.path.splitext(
+                            self.Quick_access[5:] + "\\" + in_directory[i])
+                        if file_extension == ".exe":
+                            item.setIcon(self.icon_exe)
+                        elif file_extension == '':
+                            item.setIcon(self.icon_folder)
+                        elif file_extension == ".pdf":
+                            item.setIcon(self.icon_pdf)
+                        elif file_extension == ".txt":
+                            item.setIcon(self.icon_txt)
+                        elif file_extension == ".MSI" or file_extension == ".Msi":
+                            item.setIcon(self.icon_msi)
+                        elif file_extension == ".jpg" or file_extension == ".bmp" or file_extension == ".png" or file_extension == ".ico":
+                            item.setIcon(self.icon_image)
+                        elif file_extension == ".dll" or file_extension == ".sys" or file_extension == ".ini" or file_extension == ".SAV":
+                            item.setIcon(self.icon_settings)
+                        elif file_extension == '.rar' or file_extension == ".zip" or file_extension == ".cab" or file_extension == '.iso':
+                            item.setIcon(self.icon_rar)
+                        elif file_extension == '.mkv' or file_extension == ".mpg" or file_extension == ".mov" or file_extension == '.mp4' or file_extension == '.3gp' or file_extension == ".VOB":
+                            item.setIcon(self.icon_video)
+                        elif file_extension == '.mp3' or file_extension == ".wmv":
+                            item.setIcon(self.icon_music)
+                        else:
+                            item.setIcon(self.icon_unknown)
+                    if j == 2:
+                        item.setText(
+                            str(os.path.getsize(self.Quick_access[6:]+"\\" + in_directory[i]) / (1024 ** 2)))
+                    if j == 1:
+                        file_name3, file_extension3 = os.path.splitext(
+                            self.Quick_access[5:]+"\\" + in_directory[i])
+                        if file_extension3 != "":
+                            item.setText(file_extension3[1:])
+                        else:
+                            item.setText("folder")
+    def new_folder(self):
+        global ftp_counter
+        global ftp_server
+        if ftp_counter<0:
+            ftp_counter=0
+        if ftp_counter == 0:
+            try:
+                newtext, ok = QtWidgets.QInputDialog.getText( self.centralwidget,'Text Input Dialog', 'Enter your new folder name:')
+                if ok:
+                    current_address2=self.lineEdit.text()
+                    current_address2=current_address2+'/'+newtext
+                    os.makedirs(current_address2)
+                    self.refresh()
+            except:
+                pass
+        else:
+            newtext, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog',
+                                                         'Enter your new folder name:')
+            if ok:
+                current_address2 = self.lineEdit.text()
+                current_address2 = current_address2 + '/' + newtext
+                ftp_server.send_text(current_address2+"#"+"NEW FOLDER")
+                time.sleep(0.5)
+                self.ftp_refresh()
+    def copy_thread(self):
+        if file_extension == '':
+            threading.Thread(target=self.progress_bar_dir).start()
+            shutil.copytree(source, destination)
+            self.refresh()
+        else:
+            threading.Thread(target=self.progress_bar_file).start()
+            shutil.copyfile(source, destination)
+            self.refresh()
+    def copy_file(self):
+        global ftp_counter
+        global ftp_server
+        global file_name, file_extension, destination, source
+        if ftp_counter < 0:
+            ftp_counter=0
+        if ftp_counter == 0:
+            try:
+                r = self.tableWidget.currentRow()
+                self.file_name = self.tableWidget.item(r, 0).text()
+                file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+                destination, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog',
+                                                                 'Enter your destination address:')
+                source = file_name + file_extension
+                source_list = source.split('\\')
+                file_name_paste = source_list[len(source_list) - 1]
+                destination = destination + '\\' + file_name_paste
+                if ok:
+                    threading.Thread(target=self.copy_thread).start()
+            except:
+                pass
+        else:
+            r = self.tableWidget.currentRow()
+            self.file_name = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+            destination, ok = QtWidgets.QInputDialog.getText(self.centralwidget, 'Text Input Dialog','Enter your destination address:')
+            source = file_name + file_extension
+            source_list = source.split('\\')
+            file_name_paste = source_list[len(source_list) - 1]
+            destination = destination + '\\' + file_name_paste
+            if ok:
+                ftp_server.send_text(str(source+"#"+destination+"#"+file_extension+"#"+"COPY"))
+
+    def progress_bar_file(self):
+        time.sleep(0.5)
+        total_size=os.path.getsize(source)
+        paste_size=0
+        while not total_size == paste_size:
+            time.sleep(0.5)
+            paste_size=os.path.getsize(destination)
+            percent=(paste_size/total_size)*100
+            self.progressBar.setProperty("value", percent)
+        percent = 0
+        self.progressBar.setProperty("value", percent)
+
+    def progress_bar_dir(self):
+        time.sleep(0.5)
+        folder_size = 0
+        for (path, dirs, files) in os.walk(source):
+            for file in files:
+                filename = os.path.join(path, file)
+                folder_size += os.path.getsize(filename)
+        total_size=folder_size
+        paste_size=0
+        while not total_size==paste_size:
+            time.sleep(0.5)
+            folder_size = 0
+            for (path, dirs, files) in os.walk(destination):
+                for file in files:
+                    filename = os.path.join(path, file)
+                    folder_size += os.path.getsize(filename)
+            paste_size = folder_size
+            percent=(paste_size/total_size)*100
+            self.progressBar.setProperty("value", percent)
+        percent = 0
+        self.progressBar.setProperty("value", percent)
+    def progress_bar_download(self):
+        time.sleep(0.2)
+        total_size = int(download_size)
+        print(total_size)
+        paste_size =0
+        print(file_name+file_extension)
+        addr=file_name+file_extension
+        destination=(addr).split('\\')
+        destination=destination[len(destination)-1]
+        print(destination)
+        while not total_size == paste_size:
+            time.sleep(0.1)
+            paste_size=int(os.path.getsize(destination))
+            percent=(paste_size/total_size)*100
+            self.progressBar.setProperty("value", percent)
+        percent = 100
+        self.progressBar.setProperty("value", percent)
+        time.sleep(1)
+        percent = 0
+        self.progressBar.setProperty("value", percent)
+
+
+    def delete(self):
+        global ftp_server
+        global ftp_counter
+        if ftp_counter <0:
+            ftp_counter = 0
+        if ftp_counter != 0:
+            r = self.tableWidget.currentRow()
+            file_name2 = self.tableWidget.item(r, 0).text()
+            file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + file_name2)
+            send = str(file_name+file_extension +" " +"DELETE")
+            ftp_server.send_text(send)
+            time.sleep(0.5)
+            self.ftp_refresh()
+        else:
+            try:
+                r = self.tableWidget.currentRow()
+                self.file_name = self.tableWidget.item(r, 0).text()
+                file_name, file_extension = os.path.splitext(self.lineEdit.text() + "\\" + self.file_name)
+                if file_extension=='':
+                    shutil.rmtree(file_name+file_extension)
+                    self.refresh()
+                else:
+                    os.remove(file_name+file_extension)
+
+                    self.refresh()
+            except:
+                pass
